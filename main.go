@@ -57,6 +57,14 @@ func main() {
 		handlers.GetMeticsByTimestamp(&conf, c, w, r)
 	})
 
+	auth.Get("/api/metrics/aggregates", func(c web.C, w http.ResponseWriter, r *http.Request) {
+		handlers.GetAggregatedMetrics(&conf, c, w, r)
+	})
+
+	auth.Get("/api/metrics/averages", func(c web.C, w http.ResponseWriter, r *http.Request) {
+		handlers.GetAverageMetrics(&conf, c, w, r)
+	})
+
 	// Endpoints for manipulating sites and users.
 	goji.Serve()
 }

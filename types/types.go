@@ -10,7 +10,6 @@ type Logger struct {
 	Log *logrus.Entry
 }
 
-
 type Metrics struct {
 	CPU    CPUData    `json:"cpu"`
 	Memory MemoryData `json:"memory"`
@@ -18,32 +17,32 @@ type Metrics struct {
 }
 
 type CPUData struct {
-	CPU        int32    `json:"cpu,omitempty"`
-	VendorID   string   `json:"vendor_id,omitempty"`
-	Family     string   `json:"family,omitempty"`
-	Model      string   `json:"model,omitempty"`
-	Stepping   int32    `json:"stepping,omitempty"`
-	PhysicalID string   `json:"physical_id,omitempty"`
-	CoreID     string   `json:"core_id,omitempty"`
-	Cores      int32    `json:"cores,omitempty"`
-	ModelName  string   `json:"model_name,omitempty"`
-	Mhz        float64  `json:"mhz,omitempty"`
-	CacheSize  int32    `json:"cache_size,omitempty"`
-	Timestamp  string   `json:"timestamp"`
+	CPU        int32   `json:"cpu,omitempty"`
+	VendorID   string  `json:"vendor_id,omitempty"`
+	Family     string  `json:"family,omitempty"`
+	Model      string  `json:"model,omitempty"`
+	Stepping   int32   `json:"stepping,omitempty"`
+	PhysicalID string  `json:"physical_id,omitempty"`
+	CoreID     string  `json:"core_id,omitempty"`
+	Cores      int32   `json:"cores,omitempty"`
+	ModelName  string  `json:"model_name,omitempty"`
+	Mhz        float64 `json:"mhz,omitempty"`
+	CacheSize  int32   `json:"cache_size,omitempty"`
+	Timestamp  string  `json:"timestamp,omitempty"`
 }
 
 type MemoryData struct {
-	Total uint64 `json:"total,omitempty"`
-	Available uint64 `json:"available,omitempty"`
-	Used uint64 `json:"used,omitempty"`
+	Total       uint64  `json:"total,omitempty"`
+	Available   uint64  `json:"available,omitempty"`
+	Used        uint64  `json:"used,omitempty"`
 	UsedPercent float64 `json:"percent_used,omitempty"`
-	Free uint64 `json:"free,omitempty"`
-	Active   uint64 `json:"active,omitempty"`
-	Inactive uint64 `json:"inactive,omitempty"`
-	Wired    uint64 `json:"wired,omitempty"`
-	Buffers      uint64 `json:"buffers,omitempty"`
-	Cached       uint64 `json:"cached,omitempty"`
-	Timestamp  string   `json:"timestamp,omitempty"`
+	Free        uint64  `json:"free,omitempty"`
+	Active      uint64  `json:"active,omitempty"`
+	Inactive    uint64  `json:"inactive,omitempty"`
+	Wired       uint64  `json:"wired,omitempty"`
+	Buffers     uint64  `json:"buffers,omitempty"`
+	Cached      uint64  `json:"cached,omitempty"`
+	Timestamp   string  `json:"timestamp,omitempty"`
 }
 
 type DiskData struct {
@@ -56,7 +55,7 @@ type DiskData struct {
 	InodesUsed        uint64  `json:"inodes_used,omitempty"`
 	InodesFree        uint64  `json:"inodes_free,omitempty"`
 	InodesUsedPercent float64 `json:"inodes_used_percent,omitempty"`
-	Timestamp  	  string   `json:"timestamp,omitempty"`
+	Timestamp         string  `json:"timestamp,omitempty"`
 }
 
 // LogInfo logs a message at INFO level via logrus to STDOUT.

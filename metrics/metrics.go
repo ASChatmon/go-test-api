@@ -17,16 +17,16 @@ func getCurrMemory(connection *storage.DatabaseContext, timestamp string, logger
 	}
 
 	memory := types.MemoryData{
-		Total: m.Total,
-		Available: m.Available,
-		Used: m.Used,
+		Total:       m.Total,
+		Available:   m.Available,
+		Used:        m.Used,
 		UsedPercent: m.UsedPercent,
-		Free: m.Free,
-		Active: m.Active,
-		Inactive: m.Inactive,
-		Wired: m.Wired,
-		Buffers: m.Buffers,
-		Cached: m.Cached,
+		Free:        m.Free,
+		Active:      m.Active,
+		Inactive:    m.Inactive,
+		Wired:       m.Wired,
+		Buffers:     m.Buffers,
+		Cached:      m.Cached,
 	}
 	// store memory
 	err = connection.InsertMemory(memory, timestamp, logger)
@@ -46,17 +46,17 @@ func getCurrCPU(connection *storage.DatabaseContext, timestamp string, logger *t
 	}
 
 	cpu := types.CPUData{
-		CPU: c[0].CPU,
-		VendorID: c[0].VendorID,
-		Family: c[0].Family,
-		Model: c[0].Model,
-		Stepping: c[0].Stepping,
+		CPU:        c[0].CPU,
+		VendorID:   c[0].VendorID,
+		Family:     c[0].Family,
+		Model:      c[0].Model,
+		Stepping:   c[0].Stepping,
 		PhysicalID: c[0].PhysicalID,
-		CoreID: c[0].CoreID,
-		Cores: c[0].Cores,
-		ModelName: c[0].ModelName,
-		Mhz: c[0].Mhz,
-		CacheSize: c[0].CacheSize,
+		CoreID:     c[0].CoreID,
+		Cores:      c[0].Cores,
+		ModelName:  c[0].ModelName,
+		Mhz:        c[0].Mhz,
+		CacheSize:  c[0].CacheSize,
 	}
 
 	// store cpu
@@ -77,14 +77,14 @@ func getCurrDisk(connection *storage.DatabaseContext, timestamp string, logger *
 	}
 
 	disk := types.DiskData{
-		Fstype: d.Fstype,
-		Total: d.Total,
-		Free: d.Free,
-		Used: d.Used,
-		UsedPercent: d.UsedPercent,
-		InodesTotal: d.InodesTotal,
-		InodesUsed: d.InodesUsed,
-		InodesFree: d.InodesFree,
+		Fstype:            d.Fstype,
+		Total:             d.Total,
+		Free:              d.Free,
+		Used:              d.Used,
+		UsedPercent:       d.UsedPercent,
+		InodesTotal:       d.InodesTotal,
+		InodesUsed:        d.InodesUsed,
+		InodesFree:        d.InodesFree,
 		InodesUsedPercent: d.InodesUsedPercent,
 	}
 	// store cpu
@@ -150,23 +150,46 @@ func GetDataByTimestamp(timestamp string, connection *storage.DatabaseContext, l
 	return metrics, nil
 }
 
-
-func GetAggregatedData(timestamp string, connection *storage.DatabaseContext, logger *types.Logger) (types.Metrics, error) {
+func GetAggregatedData(connection *storage.DatabaseContext, logger *types.Logger) (types.Metrics, error) {
 	metrics := types.Metrics{}
 
-	mem, err := connection.GetMemoryByTimestamp(timestamp, logger)
+	mem, err := connection.GetMemoryAggregates(logger)
 	if err != nil {
 		return metrics, err
 	}
 	metrics.Memory = mem
 
-	cpu, err := connection.GetCPUByTimestamp(timestamp, logger)
+	cpu, err := connection.GetCPUAggregates(logger)
 	if err != nil {
 		return metrics, err
 	}
 	metrics.CPU = cpu
 
-	disk, err := connection.GetDiskByTimestamp(timestamp, logger)
+	disk, err := connection.GetDiskAggregates(logger)
+	if err != nil {
+		return metrics, err
+	}
+	metrics.Disk = disk
+
+	return metrics, nil
+}
+
+func GetAverageData(connection *storage.DatabaseContext, logger *types.Logger) (types.Metrics, error) {
+	metrics := types.Metrics{}
+
+	mem, err := connection.GetMemoryAverages(logger)
+	if err != nil {
+		return metrics, err
+	}
+	metrics.Memory = mem
+
+	cpu, err := connection.GetCPUAverages(logger)
+	if err != nil {
+		return metrics, err
+	}
+	metrics.CPU = cpu
+
+	disk, err := connection.GetDiskAverages(logger)
 	if err != nil {
 		return metrics, err
 	}
