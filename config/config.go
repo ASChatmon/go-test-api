@@ -5,8 +5,8 @@ import (
 	"github.com/Sirupsen/logrus"
 	"go-test-api/storage"
 	"go-test-api/types"
-	"strings"
 	"net/http"
+	"strings"
 )
 
 // Config is a holder for the environmental configuration
@@ -16,7 +16,7 @@ type Config struct {
 	Log         *types.Logger
 	DatabaseUrl string
 	Connection  *storage.DatabaseContext
-	Interval    string 			//interval for worker
+	Interval    string //interval for worker
 	Users       map[string]string
 }
 
@@ -51,12 +51,11 @@ func New() Config {
 		userMap[userPass[0]] = userPass[1]
 	}
 
-
 	return Config{
 		Log:         log,
-		Interval: "1m",
+		Interval:    "1m",
 		DatabaseUrl: databaseUrl,
-		Users:        userMap}
+		Users:       userMap}
 
 }
 

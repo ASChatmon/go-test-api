@@ -1,14 +1,12 @@
 package handlers
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"fmt"
 	"github.com/zenazn/goji/web"
 	"go-test-api/config"
 	metrics "go-test-api/metrics"
 	"net/http"
-
-	"encoding/json"
 	"time"
 )
 

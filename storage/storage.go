@@ -5,10 +5,6 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"go-test-api/types"
-	//	"sort"
-	//	"strconv"
-	//	"strings"
-	//	"time"
 )
 
 type DatabaseContext struct {
@@ -33,7 +29,7 @@ func NewConnection(url string) (*DatabaseContext, error) {
 	return context, nil
 }
 
-
+//get current memory stats
 func (c *DatabaseContext) getMemory(logger *types.Logger) ([]*types.MemoryData, error) {
 	memoryData := []*types.MemoryData{}
 
@@ -61,6 +57,7 @@ func (c *DatabaseContext) getMemory(logger *types.Logger) ([]*types.MemoryData, 
 	return memoryData, rows.Err()
 }
 
+// get memory from db by timestamp
 func (c *DatabaseContext) GetMemoryByTimestamp(timestamp string, logger *types.Logger) (types.MemoryData, error) {
 	m := types.MemoryData{}
 
@@ -79,6 +76,7 @@ func (c *DatabaseContext) GetMemoryByTimestamp(timestamp string, logger *types.L
 	return m, nil
 }
 
+// get aggregated memory data
 func (c *DatabaseContext) GetMemoryAggregates(logger *types.Logger) (types.MemoryData, error) {
 	mems, err := c.getMemory(logger)
 	if err != nil {
@@ -113,6 +111,7 @@ func (c *DatabaseContext) GetMemoryAggregates(logger *types.Logger) (types.Memor
 	return aggM, nil
 }
 
+// get average memory data
 func (c *DatabaseContext) GetMemoryAverages(logger *types.Logger) (types.MemoryData, error) {
 	m := types.MemoryData{}
 
@@ -129,6 +128,7 @@ func (c *DatabaseContext) GetMemoryAverages(logger *types.Logger) (types.MemoryD
 	return m, nil
 }
 
+// insert memory data into db
 func (c *DatabaseContext) InsertMemory(mem types.MemoryData, time string, logger *types.Logger) error {
 	_, err := c.Connection.Exec(`INSERT into memory
 			(total, available, used, percent_used, active, inactive, wired, buffers, timestamp)
@@ -144,7 +144,7 @@ func (c *DatabaseContext) InsertMemory(mem types.MemoryData, time string, logger
 	return nil
 }
 
-
+// get current cpu stats
 func (c *DatabaseContext) getCPU(logger *types.Logger) ([]*types.CPUData, error) {
 	cpuData := []*types.CPUData{}
 
@@ -172,6 +172,7 @@ func (c *DatabaseContext) getCPU(logger *types.Logger) ([]*types.CPUData, error)
 	return cpuData, rows.Err()
 }
 
+// get cpu from db by timestamp
 func (c *DatabaseContext) GetCPUByTimestamp(timestamp string, logger *types.Logger) (types.CPUData, error) {
 	cpu := types.CPUData{}
 
@@ -191,6 +192,7 @@ func (c *DatabaseContext) GetCPUByTimestamp(timestamp string, logger *types.Logg
 	return cpu, nil
 }
 
+// get aggregated cpu data
 func (c *DatabaseContext) GetCPUAggregates(logger *types.Logger) (types.CPUData, error) {
 	cpu, err := c.getCPU(logger)
 	if err != nil {
@@ -210,6 +212,7 @@ func (c *DatabaseContext) GetCPUAggregates(logger *types.Logger) (types.CPUData,
 	return aggCPU, nil
 }
 
+// get averaged cpu data
 func (c *DatabaseContext) GetCPUAverages(logger *types.Logger) (types.CPUData, error) {
 	cpu := types.CPUData{}
 
@@ -226,6 +229,7 @@ func (c *DatabaseContext) GetCPUAverages(logger *types.Logger) (types.CPUData, e
 	return cpu, nil
 }
 
+// insert cpu data into db
 func (c *DatabaseContext) InsertCPU(cpu types.CPUData, time string, logger *types.Logger) error {
 	_, err := c.Connection.Exec(`INSERT INTO cpu
 			(cpu, vender_id, family, model, stepping, physical_id, core_id, cores, model_name, mhz, cache_size, timestamp)
@@ -241,7 +245,7 @@ func (c *DatabaseContext) InsertCPU(cpu types.CPUData, time string, logger *type
 	return nil
 }
 
-
+// get current disk data
 func (c *DatabaseContext) getDisk(logger *types.Logger) ([]*types.DiskData, error) {
 	diskData := []*types.DiskData{}
 
@@ -269,6 +273,7 @@ func (c *DatabaseContext) getDisk(logger *types.Logger) ([]*types.DiskData, erro
 	return diskData, rows.Err()
 }
 
+// get disk data by timestamp
 func (c *DatabaseContext) GetDiskByTimestamp(timestamp string, logger *types.Logger) (types.DiskData, error) {
 	disk := types.DiskData{}
 
@@ -286,6 +291,7 @@ func (c *DatabaseContext) GetDiskByTimestamp(timestamp string, logger *types.Log
 	return disk, nil
 }
 
+// insert disk data into db
 func (c *DatabaseContext) InsertDisk(disk types.DiskData, time string, logger *types.Logger) error {
 	_, err := c.Connection.Exec(`INSERT INTO disk
 			(fstype, total, free, used, used_percent, inodes_total, inodes_used, inodes_free, inodes_used_percent, timestamp)
@@ -301,6 +307,7 @@ func (c *DatabaseContext) InsertDisk(disk types.DiskData, time string, logger *t
 	return nil
 }
 
+// get aggregated disk data
 func (c *DatabaseContext) GetDiskAggregates(logger *types.Logger) (types.DiskData, error) {
 	disks, err := c.getDisk(logger)
 	if err != nil {
@@ -331,6 +338,7 @@ func (c *DatabaseContext) GetDiskAggregates(logger *types.Logger) (types.DiskDat
 	return aggD, nil
 }
 
+// get averaged disk data
 func (c *DatabaseContext) GetDiskAverages(logger *types.Logger) (types.DiskData, error) {
 	disk := types.DiskData{}
 	// db is fast. let's try that
