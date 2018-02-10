@@ -5,6 +5,8 @@ import (
 	"github.com/Sirupsen/logrus"
 	"go-test-api/storage"
 	"go-test-api/types"
+	"strings"
+	"net/http"
 )
 
 // Config is a holder for the environmental configuration
@@ -14,6 +16,8 @@ type Config struct {
 	Log         *types.Logger
 	DatabaseUrl string
 	Connection  *storage.DatabaseContext
+	Interval    string 			//interval for worker
+	Users       map[string]string
 }
 
 // New reads the environment variables provided either
@@ -34,8 +38,28 @@ func New() Config {
 	databasePassword := ""
 	databaseUrl := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", databaseUser, databasePassword, databaseHost, databasePort, databaseName)
 
+	users := "test:me"
+	userSplit := strings.Split(users, ";")
+	userMap := make(map[string]string)
+	var userPass []string
+
+	for i := 0; i < len(userSplit); i += 1 {
+		if userSplit[i] == "" {
+			continue
+		}
+		userPass = strings.SplitN(userSplit[i], ":", 2)
+		userMap[userPass[0]] = userPass[1]
+	}
+
+
 	return Config{
 		Log:         log,
-		DatabaseUrl: databaseUrl}
+		Interval: "1m",
+		DatabaseUrl: databaseUrl,
+		Users:        userMap}
 
+}
+
+func (c Config) IsInUserMap(user string, pass string, r *http.Request) bool {
+	return c.Users[user] == pass
 }

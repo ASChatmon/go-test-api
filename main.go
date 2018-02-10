@@ -5,11 +5,12 @@ import (
 	"go-test-api/handlers"
 	"go-test-api/handlers/middleware"
 	"go-test-api/storage"
-	//"github.com/goji/httpauth"
+	"github.com/goji/httpauth"
 	"github.com/zenazn/goji"
 	"github.com/zenazn/goji/web"
 	gojiMiddleware "github.com/zenazn/goji/web/middleware"
 	"net/http"
+	"time"
 	"os"
 )
 
@@ -26,9 +27,11 @@ func main() {
 
 	conf.Connection = database
 
-	//authOpts := httpauth.AuthOptions{
-	//	AuthFunc: conf.IsInUserMap,
-	//}
+	authOpts := httpauth.AuthOptions{
+		AuthFunc: conf.IsInUserMap,
+	}
+
+	go startWorker(conf)
 
 	auth := web.New()
 
@@ -37,7 +40,7 @@ func main() {
 	goji.Handle("/api/*", auth)
 
 	// Basic Auth
-	//auth.Use(httpauth.BasicAuth(authOpts))
+	auth.Use(httpauth.BasicAuth(authOpts))
 	auth.Use(middleware.LogWithTransactionId(&conf))
 
 	// host documentation
@@ -67,4 +70,21 @@ func main() {
 
 	// Endpoints for manipulating sites and users.
 	goji.Serve()
+}
+
+func work(c config.Config) {
+	c.Log.LogInfo("work","getting latest metrics","")
+	handlers.WorkerMetrics(&c)
+}
+
+func startWorker(c config.Config) {
+	c.Log.LogInfo("Worker","Starting Worker","")
+	duration, err := time.ParseDuration(c.Interval)
+	if err != nil {
+		return
+	}
+	for {
+		time.Sleep(duration)
+		go work(c)
+	}
 }

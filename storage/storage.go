@@ -33,11 +33,7 @@ func NewConnection(url string) (*DatabaseContext, error) {
 	return context, nil
 }
 
-/*
-Get Method for all memory data
-@Return memory list
-	error
-*/
+
 func (c *DatabaseContext) getMemory(logger *types.Logger) ([]*types.MemoryData, error) {
 	memoryData := []*types.MemoryData{}
 
@@ -133,8 +129,6 @@ func (c *DatabaseContext) GetMemoryAverages(logger *types.Logger) (types.MemoryD
 	return m, nil
 }
 
-
-
 func (c *DatabaseContext) InsertMemory(mem types.MemoryData, time string, logger *types.Logger) error {
 	_, err := c.Connection.Exec(`INSERT into memory
 			(total, available, used, percent_used, active, inactive, wired, buffers, timestamp)
@@ -149,6 +143,7 @@ func (c *DatabaseContext) InsertMemory(mem types.MemoryData, time string, logger
 
 	return nil
 }
+
 
 func (c *DatabaseContext) getCPU(logger *types.Logger) ([]*types.CPUData, error) {
 	cpuData := []*types.CPUData{}
@@ -231,7 +226,6 @@ func (c *DatabaseContext) GetCPUAverages(logger *types.Logger) (types.CPUData, e
 	return cpu, nil
 }
 
-
 func (c *DatabaseContext) InsertCPU(cpu types.CPUData, time string, logger *types.Logger) error {
 	_, err := c.Connection.Exec(`INSERT INTO cpu
 			(cpu, vender_id, family, model, stepping, physical_id, core_id, cores, model_name, mhz, cache_size, timestamp)
@@ -246,6 +240,7 @@ func (c *DatabaseContext) InsertCPU(cpu types.CPUData, time string, logger *type
 
 	return nil
 }
+
 
 func (c *DatabaseContext) getDisk(logger *types.Logger) ([]*types.DiskData, error) {
 	diskData := []*types.DiskData{}
@@ -335,7 +330,6 @@ func (c *DatabaseContext) GetDiskAggregates(logger *types.Logger) (types.DiskDat
 
 	return aggD, nil
 }
-
 
 func (c *DatabaseContext) GetDiskAverages(logger *types.Logger) (types.DiskData, error) {
 	disk := types.DiskData{}

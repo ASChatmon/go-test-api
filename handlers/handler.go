@@ -12,6 +12,13 @@ import (
 	"time"
 )
 
+func WorkerMetrics(config *config.Config) {
+	_, err := metrics.GetCurrData(config.Connection, config.Log)
+	if err != nil {
+		config.Log.LogError("WorkerMetrics", "Execution error", err.Error())
+	}
+}
+
 func GetCurrentMetics(config *config.Config, c web.C, w http.ResponseWriter, r *http.Request) {
 	startNanos := time.Now().UnixNano()
 	w.Header().Set("Content-Type", "application/json")
@@ -31,9 +38,8 @@ func GetCurrentMetics(config *config.Config, c web.C, w http.ResponseWriter, r *
 	}
 
 	finishMilis := (time.Now().UnixNano() - startNanos) / 1000000
-	fmt.Println(finishMilis)
 
-	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", err))
+	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", finishMilis))
 	w.Write(json)
 }
 
@@ -58,9 +64,8 @@ func GetMeticsByTimestamp(config *config.Config, c web.C, w http.ResponseWriter,
 	}
 
 	finishMilis := (time.Now().UnixNano() - startNanos) / 1000000
-	fmt.Println(finishMilis)
 
-	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", err))
+	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", finishMilis))
 	w.Write(json)
 }
 
@@ -83,9 +88,8 @@ func GetAggregatedMetrics(config *config.Config, c web.C, w http.ResponseWriter,
 	}
 
 	finishMilis := (time.Now().UnixNano() - startNanos) / 1000000
-	fmt.Println(finishMilis)
 
-	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", err))
+	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", finishMilis))
 	w.Write(json)
 }
 
@@ -108,8 +112,7 @@ func GetAverageMetrics(config *config.Config, c web.C, w http.ResponseWriter, r 
 	}
 
 	finishMilis := (time.Now().UnixNano() - startNanos) / 1000000
-	fmt.Println(finishMilis)
 
-	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", err))
+	config.Log.LogInfo("GetCurrentMetics", "Process Time", fmt.Sprintf("%d ms", finishMilis))
 	w.Write(json)
 }
