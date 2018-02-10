@@ -2,9 +2,6 @@ package types
 
 import (
 	"github.com/Sirupsen/logrus"
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/disk"
-	"github.com/shirou/gopsutil/mem"
 )
 
 // Logger is a wrapper around logrus that provides convenience
@@ -13,36 +10,53 @@ type Logger struct {
 	Log *logrus.Entry
 }
 
-type Metrics struct {
-	CPU    cpu.InfoStat          `json:"cpu"`
-	Memory mem.VirtualMemoryStat `json:"memory"`
-	Disk   disk.UsageStat        `json:"disk"`
-}
 
-/* this may seem odd but the merging of timestamp is less convoluted and clunky
-than recreating the individual structs just to add time.
-*/
-type MetricsData struct {
+type Metrics struct {
 	CPU    CPUData    `json:"cpu"`
 	Memory MemoryData `json:"memory"`
 	Disk   DiskData   `json:"disk"`
 }
 
-type Timestamp struct {
-	Timestamp string `json:"timestamp"`
+type CPUData struct {
+	CPU        int32    `json:"cpu,omitempty"`
+	VendorID   string   `json:"vendor_id,omitempty"`
+	Family     string   `json:"family,omitempty"`
+	Model      string   `json:"model,omitempty"`
+	Stepping   int32    `json:"stepping,omitempty"`
+	PhysicalID string   `json:"physical_id,omitempty"`
+	CoreID     string   `json:"core_id,omitempty"`
+	Cores      int32    `json:"cores,omitempty"`
+	ModelName  string   `json:"model_name,omitempty"`
+	Mhz        float64  `json:"mhz,omitempty"`
+	CacheSize  int32    `json:"cache_size,omitempty"`
+	Timestamp  string   `json:"timestamp"`
 }
 
-type CPUData struct {
-	Timestamp
-	cpu.InfoStat
-}
 type MemoryData struct {
-	Timestamp
-	mem.VirtualMemoryStat
+	Total uint64 `json:"total,omitempty"`
+	Available uint64 `json:"available,omitempty"`
+	Used uint64 `json:"used,omitempty"`
+	UsedPercent float64 `json:"percent_used,omitempty"`
+	Free uint64 `json:"free,omitempty"`
+	Active   uint64 `json:"active,omitempty"`
+	Inactive uint64 `json:"inactive,omitempty"`
+	Wired    uint64 `json:"wired,omitempty"`
+	Buffers      uint64 `json:"buffers,omitempty"`
+	Cached       uint64 `json:"cached,omitempty"`
+	Timestamp  string   `json:"timestamp,omitempty"`
 }
+
 type DiskData struct {
-	Timestamp
-	disk.UsageStat
+	Fstype            string  `json:"fstype,omitempty"`
+	Total             uint64  `json:"total,omitempty"`
+	Free              uint64  `json:"free,omitempty"`
+	Used              uint64  `json:"used,omitempty"`
+	UsedPercent       float64 `json:"used_percent,omitempty"`
+	InodesTotal       uint64  `json:"inodes_total,omitempty"`
+	InodesUsed        uint64  `json:"inodes_used,omitempty"`
+	InodesFree        uint64  `json:"inodes_free,omitempty"`
+	InodesUsedPercent float64 `json:"inodes_used_percent,omitempty"`
+	Timestamp  	  string   `json:"timestamp,omitempty"`
 }
 
 // LogInfo logs a message at INFO level via logrus to STDOUT.

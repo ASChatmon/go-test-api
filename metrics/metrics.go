@@ -10,52 +10,90 @@ import (
 )
 
 // get and save curr memory stats
-func getCurrMemory(connection *storage.DatabaseContext, timestamp string, logger *types.Logger) (*mem.VirtualMemoryStat, error) {
+func getCurrMemory(connection *storage.DatabaseContext, timestamp string, logger *types.Logger) (*types.MemoryData, error) {
 	m, err := mem.VirtualMemory()
 	if err != nil {
-		return m, err
-	}
-	// store memory
-	err = connection.InsertMemory(*m, timestamp, logger)
-	if err != nil {
-		return m, err
+		return &types.MemoryData{}, err
 	}
 
-	return m, err
+	memory := types.MemoryData{
+		Total: m.Total,
+		Available: m.Available,
+		Used: m.Used,
+		UsedPercent: m.UsedPercent,
+		Free: m.Free,
+		Active: m.Active,
+		Inactive: m.Inactive,
+		Wired: m.Wired,
+		Buffers: m.Buffers,
+		Cached: m.Cached,
+	}
+	// store memory
+	err = connection.InsertMemory(memory, timestamp, logger)
+	if err != nil {
+		return &types.MemoryData{}, err
+	}
+
+	return &memory, err
 }
 
 // get and save curr CPU stats
-func getCurrCPU(connection *storage.DatabaseContext, timestamp string, logger *types.Logger) (cpu.InfoStat, error) {
+func getCurrCPU(connection *storage.DatabaseContext, timestamp string, logger *types.Logger) (types.CPUData, error) {
 
 	c, err := cpu.Info()
-	if err != nil {
-		return cpu.InfoStat{}, err
+	if err != nil || len(c) == 0 {
+		return types.CPUData{}, err
+	}
+
+	cpu := types.CPUData{
+		CPU: c[0].CPU,
+		VendorID: c[0].VendorID,
+		Family: c[0].Family,
+		Model: c[0].Model,
+		Stepping: c[0].Stepping,
+		PhysicalID: c[0].PhysicalID,
+		CoreID: c[0].CoreID,
+		Cores: c[0].Cores,
+		ModelName: c[0].ModelName,
+		Mhz: c[0].Mhz,
+		CacheSize: c[0].CacheSize,
 	}
 
 	// store cpu
-	err = connection.InsertCPU(c[0], timestamp, logger)
+	err = connection.InsertCPU(cpu, timestamp, logger)
 	if err != nil {
-		return cpu.InfoStat{}, err
+		return types.CPUData{}, err
 	}
 
-	return c[0], err
+	return cpu, err
 }
 
 // get and save curr disk stats
-func getCurrDisk(connection *storage.DatabaseContext, timestamp string, logger *types.Logger) (disk.UsageStat, error) {
+func getCurrDisk(connection *storage.DatabaseContext, timestamp string, logger *types.Logger) (types.DiskData, error) {
 
 	d, err := disk.Usage("/")
 	if err != nil {
-		return disk.UsageStat{}, err
+		return types.DiskData{}, err
 	}
 
+	disk := types.DiskData{
+		Fstype: d.Fstype,
+		Total: d.Total,
+		Free: d.Free,
+		Used: d.Used,
+		UsedPercent: d.UsedPercent,
+		InodesTotal: d.InodesTotal,
+		InodesUsed: d.InodesUsed,
+		InodesFree: d.InodesFree,
+		InodesUsedPercent: d.InodesUsedPercent,
+	}
 	// store cpu
-	err = connection.InsertDisk(*d, timestamp, logger)
+	err = connection.InsertDisk(disk, timestamp, logger)
 	if err != nil {
-		return disk.UsageStat{}, err
+		return types.DiskData{}, err
 	}
 
-	return *d, err
+	return disk, err
 }
 
 func GetCurrData(connection *storage.DatabaseContext, logger *types.Logger) (types.Metrics, error) {
@@ -89,6 +127,31 @@ func GetCurrData(connection *storage.DatabaseContext, logger *types.Logger) (typ
 }
 
 func GetDataByTimestamp(timestamp string, connection *storage.DatabaseContext, logger *types.Logger) (types.Metrics, error) {
+	metrics := types.Metrics{}
+
+	mem, err := connection.GetMemoryByTimestamp(timestamp, logger)
+	if err != nil {
+		return metrics, err
+	}
+	metrics.Memory = mem
+
+	cpu, err := connection.GetCPUByTimestamp(timestamp, logger)
+	if err != nil {
+		return metrics, err
+	}
+	metrics.CPU = cpu
+
+	disk, err := connection.GetDiskByTimestamp(timestamp, logger)
+	if err != nil {
+		return metrics, err
+	}
+	metrics.Disk = disk
+
+	return metrics, nil
+}
+
+
+func GetAggregatedData(timestamp string, connection *storage.DatabaseContext, logger *types.Logger) (types.Metrics, error) {
 	metrics := types.Metrics{}
 
 	mem, err := connection.GetMemoryByTimestamp(timestamp, logger)
