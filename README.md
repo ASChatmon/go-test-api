@@ -1,6 +1,6 @@
 # go-test-api
 
-    This service is a directed graph that will represent all the workflow transitions.
+    This service shows basic api structure with auth, logging, metrics, and db usage.
 
 ## Running
 
