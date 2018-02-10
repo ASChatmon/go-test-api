@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+# Without this environment variable set, if we try to run the
+# generated binary in a "scratch" container then it will panic.
+CGO_ENABLED=0 go build -v

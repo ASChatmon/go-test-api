@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+# This script, as its name suggests, runs all unit tests.
+
+packages=$(go list ./... | grep -v /vendor/ | xargs)
+
+go test -v -race $packages

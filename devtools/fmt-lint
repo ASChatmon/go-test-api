@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+packages=$(go list ./... | grep -v /vendor/ | xargs)
+
+echo 'running go fmt on all packages...'
+invalidFiles=$(go fmt $packages 2>&1)
+if [ "$invalidFiles" ]; then
+  echo "These files did not pass the 'go fmt' check, please run 'go fmt' on them:"
+  echo $invalidFiles
+  exit 1
+fi
+
+echo 'running go vet on all packages...'
+go vet $packages
